@@ -43,7 +43,7 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="table-responsive">
-									<form method="post" action="{{route('salva_indicacao')}}">
+									<form method="post" action="{{route('salva_indicacao')}}"  enctype="multipart/form-data">
 										@csrf
 										<table class="table table-bordered table-striped m-b-0">
 											<thead>
@@ -54,10 +54,22 @@
 											</thead>
 											<tbody>
 												<tr>
+													<td>Qual a ementa da indicação</td>
+													<td id="ementa" colspan="4">
+														<select class="form-control" name="tipo_texto_indicacao" required="required">
+															<option value="">Selecione a ementa desejada</option>
+															<option value="1">Em toda extensão da rua/Av</option>
+															<option value="2">Com cruzamento</option>
+															<option value="3">Com numero</option>
+															<option value="4">No bairro</option>
+														</select>
+													</td>
+												</tr>
+												<tr id="tr_endereco">
 													<td>Endereço</td>
 													<td id="endereco" colspan="4"></td>
 												</tr>
-												<tr>
+												<tr id="cruzamento_tr">
 													<td>Cruzamento</td>
 													<td class="field_wrapper_cruzamento" colspan="4"><div id="texto_cruzamento">Informe se há cruzamento <a href="#" class="add_button_cruzamento">Clique aqui</a></div></td>
 												</tr>
@@ -77,7 +89,7 @@
 												<tr>
 													<td>Qual a ementa da indicação</td>
 													<td id="ementa" colspan="4">
-														<select class="form-control" name="ementa">
+														<select class="form-control" name="ementa" required="required">
 															<option value="">Selecione a ementa desejada</option>
 															@foreach($ementas as $ementa)
 															<option value="{{$ementa->id_ementa}}">{{$ementa->titulo_ementa}}</option>
@@ -91,7 +103,7 @@
 												<tr>
 													<td colspan="4">
 														<label class="col-sm-2 control-label">Deseja imagens do local?</label>
-														<input type="file" name="imagem"><p class="help-block">Somente .JPG.</p>
+														<input type="file" name="images[]"  multiple="multiple" accept="image/jpg, image/jpeg" id="image"><p class="help-block">Somente .JPG.</p>
 													</td>
 												</tr>
 
@@ -110,7 +122,7 @@
 								<div class="col-md-6">
 									<div id="pano" style="height:300px"></div>
 									<div class="col-md-12">
-										<div class="btn-group btn-group-justified">
+										<div class="btn-group">
 											<input type="submit" class="btn btn-success" value="Criar indicação">
 										</div>
 									</form>
@@ -156,11 +168,20 @@
 <script src="{{ asset('scripts_proprios/maps.js')}}"></script>
 <script src="{{ asset('scripts/helpers/smartresize.js')}}"></script>
 <script type="text/javascript">
+    $("#image").on("change", function() {
+         if($("#image")[0].files.length > 3) {
+                   alert("Você pode selecionar até 3 imagens");
+                   document.getElementById("image").value = "";
+         } else {
+               
+         }
+    });
 	$(document).ready(function(){
+
     var maxField_cruzamento = 1; //Input fields increment limitation
     var addButton_cruzamento = $('.add_button_cruzamento'); //Add button selector
     var wrapper_cruzamento = $('.field_wrapper_cruzamento'); //Input field wrapper
-    var fieldHTML_cruzamento = '<div><input type="text" class="form-control" name="cruzamento" value=""/><a href="javascript:void(0);" class="remove_button_cruzamento" title="Remove field"> Remover</a></div>'; //New input field html 
+    var fieldHTML_cruzamento = '<div><input type="text" class="form-control" name="cruzamento" value=""/><a href="javascript:void(0);" required="required" class="remove_button_cruzamento" title="Remove field"> Remover</a></div>'; //New input field html 
     var x_cruzamento = 0; //Initial field counter is 1
     $(addButton_cruzamento).click(function(){ //Once add button is clicked
         if(x_cruzamento < maxField_cruzamento){ //Check maximum number of input fields
@@ -176,13 +197,13 @@
         $(this).parent('div').remove(); //Remove field html
         x_cruzamento--; //Decrement field counter
         $('#texto_cruzamento').show();
-          $('#numero_tr').show();
+        $('#numero_tr').show();
     });
     ///////////////////////////////////////////////////////////////
     var maxField_numero = 1; //Input fields increment limitation
     var addButton_numero = $('.add_button_numero'); //Add button selector
     var wrapper_numero = $('.field_wrapper_numero'); //Input field wrapper
-    var fieldHTML_numero = '<div><input type="text" class="form-control" name="numero_alternativo" value=""/><a href="javascript:void(0);" class="remove_button_numero" title="Remove field"> Remover</a></div>'; //New input field html 
+    var fieldHTML_numero = '<div><input type="text" class="form-control" name="numero_alternativo" value=""/><a href="javascript:void(0);" required="required" class="remove_button_numero" title="Remove field"> Remover</a></div>'; //New input field html 
     var x_numero = 0; //Initial field counter is 1
     $(addButton_numero).click(function(){ //Once add button is clicked
         if(x_numero < maxField_numero){ //Check maximum number of input fields
@@ -202,7 +223,7 @@
     var maxField_justificativa = 1; //Input fields increment limitation
     var addButton_justificativa = $('.add_button_justificativa'); //Add button selector
     var wrapper_justificativa = $('.field_wrapper_justificativa'); //Input field wrapper
-    var fieldHTML_justificativa = '<div><textarea class="form-control" name="justificativa" rows="4" cols="50"></textarea><a href="javascript:void(0);" class="remove_button_justificativa" title="Remove field"> Remover</a></div>'; //New input field html 
+    var fieldHTML_justificativa = '<div><textarea class="form-control" name="justificativa" rows="4" cols="50"></textarea><a href="javascript:void(0);" required="required" class="remove_button_justificativa" title="Remove field"> Remover</a></div>'; //New input field html 
     var x_justificativa = 0; //Initial field counter is 1
     $(addButton_justificativa).click(function(){ //Once add button is clicked
         if(x_justificativa < maxField_justificativa){ //Check maximum number of input fields

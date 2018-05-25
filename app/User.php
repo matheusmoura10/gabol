@@ -4,25 +4,17 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\indicacao;
+use App\models\despacho_status;
 
 class User extends Authenticatable
 {
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'name', 'email', 'password',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
@@ -36,7 +28,17 @@ class User extends Authenticatable
         return $this->lista_ementa()->where('status_ementa','=', 1);
     }
 
+    public function lista_despacho(){
+
+        return $this->hasMany(despacho_status::class, 'id_dominio_despacho','id_dominio_users');
+    }
+
+    public function lista_despacho_id($id_tramite_status) {
+        return $this->lista_despacho()->where('status_tramite','=', $id_tramite_status);
+    }
+
     public function retorna_dados_configuracao(){
         return $this->hasOne(models\config_aplicacao::class,'id_aplicacao','id_dominio_users');
     }
+
 }
